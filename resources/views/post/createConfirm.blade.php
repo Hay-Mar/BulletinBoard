@@ -30,7 +30,7 @@
                 <div class="col-md-10">
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary mr-4">Create</button>
-                        <a href="" class="btn btn-dark">Cancel</a>
+                        <a href="/posts/create" class="btn btn-dark">Cancel</a>
                     </div>
                 </div>
                 </div>

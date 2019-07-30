@@ -120,11 +120,12 @@ class PostController extends Controller
         }
         $title  =  $request->title;
         $desc   =  $request->desc;
+        $post_id=  $request->id;
         session([
             'title' => $title,
             'desc'  => $desc
         ]);
-        return view('post.createConfirm',compact('title','desc'));
+        return view('post.createConfirm',compact('title','desc','post_id'));
     }
     /**
      * Store a newly created resource in storage.

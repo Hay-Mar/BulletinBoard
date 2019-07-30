@@ -66,6 +66,7 @@ class UserDao implements UserDaoInterface
    */
   public function searchUser($name, $email, $date_from, $date_to)
   {
+    $fields=[$name,$email];
     //All Null
     if ($name == null && $email == null && $date_from == null && $date_to == null) {
         $users = User::select(
@@ -95,7 +96,7 @@ class UserDao implements UserDaoInterface
                     'users.updated_at',
                     'u1.name as created_user_name')
                     ->where('users.name', 'LIKE', '%' . $name . '%')
-                    ->where('users.email', 'LIKE', '%' . $email . '%')
+                    ->orwhere('users.email', 'LIKE', '%' . $email . '%')
                     ->join('users as u1', 'u1.id', 'u1.create_user_id')
                     ->orderBy('users.updated_at', 'DESC')
                     ->paginate(5);
@@ -122,19 +123,6 @@ class UserDao implements UserDaoInterface
         }
         // elseif((isset($name) && isset($email)) &&
         //         (is_null($date_from) && is_null($date_to))) {
-        //           $users_one = User::select(
-        //             'users.name',
-        //             'users.email',
-        //             'users.phone',
-        //             'users.dob',
-        //             'users.address',
-        //             'users.created_at',
-        //             'users.updated_at',
-        //             'users.id',
-        //             'u1.name as created_user_name')
-        //             ->join('users as u1', 'u1.id', 'users.create_user_id')
-        //             ->where('users.name', 'LIKE', '%' . $name . '%');
-
         //           $users = User::select(
         //             'users.name',
         //             'users.email',
@@ -146,8 +134,8 @@ class UserDao implements UserDaoInterface
         //             'users.id',
         //             'u1.name as created_user_name')
         //             ->join('users as u1', 'u1.id', 'users.create_user_id')
-        //             ->where('users.email', 'LIKE', '%' . $email . '%')
-        //             ->union($users_one)
+        //             ->where('users.name', 'LIKE', '%' . $name . '%')
+        //             ->orwhere('users.email', 'LIKE', '%' . $email . '%')
         //             ->orderBy('users.updated_at', 'DESC')
         //             ->paginate(5);
         // }
