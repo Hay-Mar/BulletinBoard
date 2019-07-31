@@ -66,82 +66,144 @@ class UserDao implements UserDaoInterface
    */
   public function searchUser($name, $email, $date_from, $date_to)
   {
-    $fields=[$name,$email];
-    //All Null
-    if ($name == null && $email == null && $date_from == null && $date_to == null) {
-        $users = User::select(
-          'users.name',
-          'users.email',
-          'users.phone',
-          'users.dob',
-          'users.address',
-          'users.created_at',
-          'users.updated_at',
-          'u1.name as created_user_name')
-          ->join('users as u1', 'u1.id', 'u1.create_user_id')
-          ->orderBy('users.updated_at', 'DESC')
-          ->paginate(5);
+    $query = User::select(
+                  'users.name',
+                  'users.email',
+                  'users.phone',
+                  'users.dob',
+                  'users.address',
+                  'users.created_at',
+                  'users.updated_at',
+                  'u1.name as created_user_name')
+                  ->join('users as u1', 'u1.id', 'u1.create_user_id');
+      if ($name == null && $email == null && $date_from == null && $date_to == null) {
+          $users = $query
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
       }
-    else {
-        //Name OR Email And Date Null
-        if ((isset($name) || isset($email)) &&
-            (is_null($date_from) && is_null($date_to))) {
-                $users = User::select(
-                    'users.name',
-                    'users.email',
-                    'users.phone',
-                    'users.dob',
-                    'users.address',
-                    'users.created_at',
-                    'users.updated_at',
-                    'u1.name as created_user_name')
-                    ->where('users.name', 'LIKE', '%' . $name . '%')
-                    ->orwhere('users.email', 'LIKE', '%' . $email . '%')
-                    ->join('users as u1', 'u1.id', 'u1.create_user_id')
-                    ->orderBy('users.updated_at', 'DESC')
-                    ->paginate(5);
+      else{
+        if(isset($name)) {
+          if(isset($email)) {
+            if(isset($date_from) && isset($date_to)) {
+                $users = $query
+                  ->where('users.name', 'LIKE', '%' . $name . '%')
+                  ->orwhere('users.email', 'LIKE', '%' . $email . '%')
+                  ->orwhereBetween('users.created_at', array($date_from, $date_to))
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+            else {
+                $users = $query
+                  ->where('users.name', 'LIKE', '%' . $name . '%')
+                  ->orwhere('users.email', 'LIKE', '%' . $email . '%')
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+          }
+          else {
+            if(isset($date)){
+                $users = $query
+                  ->where('users.name', 'LIKE', '%' . $name . '%')
+                  ->orwhereBetween('users.created_at', array($date_from, $date_to))
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+            else{
+                 $users = $query
+                  ->where('users.name', 'LIKE', '%' . $name . '%')
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+          }
         }
-        //Name OR Email OR Date
-        elseif ((isset($name) || isset($email)) ||
-            (isset($date_from) && isset($date_to))) {
-                $users = User::select(
-                    'users.name',
-                    'users.email',
-                    'users.phone',
-                    'users.dob',
-                    'users.address',
-                    'users.created_at',
-                    'users.updated_at',
-                    'users.id',
-                    'u1.name as created_user_name')
-                    ->join('users as u1', 'u1.id', 'users.create_user_id')
-                    ->where('users.name', 'LIKE', '%' . $name . '%')
-                    ->where('users.email', 'LIKE', '%' . $email . '%')
-                    ->whereBetween('users.created_at', array($date_to, $date_from))
-                    ->orderBy('users.updated_at', 'DESC')
-                    ->paginate(5);
+        else{
+          if(isset($email)) {
+            if(isset($date_from) && isset($date_to)) {
+                $users = $query
+                  ->where('users.email', 'LIKE', '%' . $email . '%')
+                  ->orwhereBetween('users.created_at', array($date_from, $date_to))
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+            else{
+                $users = $query
+                  ->where('users.email', 'LIKE', '%' . $email . '%')
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+          }
+          else{
+            if(isset($date_from) && isset($date_to)) {
+                $users = $query
+                  ->whereBetween('users.created_at', array($date_from, $date_to))
+                  ->orderBy('users.updated_at', 'DESC')
+                  ->paginate(5);
+            }
+          }
         }
-        // elseif((isset($name) && isset($email)) &&
-        //         (is_null($date_from) && is_null($date_to))) {
-        //           $users = User::select(
-        //             'users.name',
-        //             'users.email',
-        //             'users.phone',
-        //             'users.dob',
-        //             'users.address',
-        //             'users.created_at',
-        //             'users.updated_at',
-        //             'users.id',
-        //             'u1.name as created_user_name')
-        //             ->join('users as u1', 'u1.id', 'users.create_user_id')
-        //             ->where('users.name', 'LIKE', '%' . $name . '%')
-        //             ->orwhere('users.email', 'LIKE', '%' . $email . '%')
-        //             ->orderBy('users.updated_at', 'DESC')
-        //             ->paginate(5);
-        // }
-    }
+      }
       return $users;
   }
+
+  // public function searchUser($name, $email, $date_from, $date_to)
+  // {
+  //   //All Null
+  //   if ($name == null && $email == null && $date_from == null && $date_to == null) {
+  //       $users = User::select(
+  //         'users.name',
+  //         'users.email',
+  //         'users.phone',
+  //         'users.dob',
+  //         'users.address',
+  //         'users.created_at',
+  //         'users.updated_at',
+  //         'u1.name as created_user_name')
+  //         ->join('users as u1', 'u1.id', 'u1.create_user_id')
+  //         ->orderBy('users.updated_at', 'DESC')
+  //         ->paginate(5);
+  //     }
+  //   else {
+  //       //Name OR Email And Date Null
+  //       if ((isset($name) || isset($email)) &&
+  //           (is_null($date_from) && is_null($date_to))) {
+  //               $users = User::select(
+  //                   'users.name',
+  //                   'users.email',
+  //                   'users.phone',
+  //                   'users.dob',
+  //                   'users.address',
+  //                   'users.created_at',
+  //                   'users.updated_at',
+  //                   'u1.name as created_user_name')
+  //                   ->where('users.name', 'LIKE', '%' . $name . '%')
+  //                   ->orwhere('users.email', 'LIKE', '%' . $email . '%')
+  //                   ->join('users as u1', 'u1.id', 'u1.create_user_id')
+  //                   ->orderBy('users.updated_at', 'DESC')
+  //                   ->paginate(5);
+  //       }
+  //       //Name OR Email OR Date
+  //       elseif ((isset($name) || isset($email)) ||
+  //           (isset($date_from) && isset($date_to))) {
+  //               $users = User::select(
+  //                   'users.name',
+  //                   'users.email',
+  //                   'users.phone',
+  //                   'users.dob',
+  //                   'users.address',
+  //                   'users.created_at',
+  //                   'users.updated_at',
+  //                   'users.id',
+  //                   'u1.name as created_user_name')
+  //                   ->join('users as u1', 'u1.id', 'users.create_user_id')
+  //                   ->where('users.name', 'LIKE', '%' . $name . '%')
+  //                   ->where('users.email', 'LIKE', '%' . $email . '%')
+  //                   ->whereBetween('users.created_at', array($date_to, $date_from))
+  //                   ->orderBy('users.updated_at', 'DESC')
+  //                   ->paginate(5);
+  //       }
+  //   }
+  //     return $users;
+  // }
 
   /**
    * Get User detail

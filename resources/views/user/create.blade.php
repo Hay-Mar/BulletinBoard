@@ -78,7 +78,12 @@
                 </div>
                 <div class="form-group row">
                     <label for="profile" class="col-md-4">Profile</label>
-                    <input type="file" id="profile" name="profileImg" value="{{old('profileImg')}}">
+                    <input type="file" id="profile" name="profileImg" onchange="preview_image(event)" value="{{old('profileImg')}}">
+                    <!-- <button type="button" class="b">
+                        x
+                    </button> -->
+                    <img id="output_image" width="100px">
+                    
                     @if ($errors->has('profile'))
                         <div class="col-md-4"></div>
                         <div class="col-md-6 mt-1 text-danger">{{ $errors->first('profile') }}</div>
@@ -95,3 +100,23 @@
     </div>
 </div>
 @endsection
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+<script type="text/javascript">
+    function preview_image(event) 
+    {
+        var reader = new FileReader();
+        reader.onload = function() {
+               var output = document.getElementById('output_image');
+               output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
+    }
+
+    // $(document).ready(function(){
+    //     $(".b").click(function(){
+    //         $("#output_image").remove();
+
+    //     });
+    // });
+
+</script>

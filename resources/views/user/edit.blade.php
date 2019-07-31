@@ -70,7 +70,8 @@
                 </div>
                 <div class="form-group row">
                     <label for="profile_photo" class="col-md-4">Profile</label>
-                    <input type="file" name="profile_photo" class="form-control-file col-md-6" id="profile_photo">
+                    <input type="file" name="profile_photo" onchange="preview_image(event)" class="form-control-file col-md-6" id="profile_photo">
+                    <img id="output_image" width="100px">
                     @if ($errors->has('profile_photo'))
                         <div class="col-md-4"></div>
                         <div class="col-md-6 mt-1 text-danger">{{ $errors->first('profile_photo') }}</div>
@@ -91,6 +92,8 @@
     </div>
 </div>
 @endsection
+
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 <script type="text/javascript">
     
     function resetBtn(){
@@ -101,5 +104,14 @@
         $('#dob').val('');
         $('#address').val('');
         
+    }
+    function preview_image(event) 
+    {
+        var reader = new FileReader();
+        reader.onload = function() {
+               var output = document.getElementById('output_image');
+               output.src = reader.result;
+        }
+        reader.readAsDataURL(event.target.files[0]);
     }
 </script>

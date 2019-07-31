@@ -29,7 +29,7 @@
                 <div class="form-group row">
                     <label class="col-md-4 form-check-label" for="status">Status</label>
                     <div class="col">
-                        <input type="checkbox" id="status" name="status" class="form-check-input col-md-1" value="{{$status}}">
+                        <input type="checkbox" id="status" name="status" disabled="disabled" class="form-check-input col-md-1" value="{{$status}}" @if($status=='1' ) {{"checked"}} @endif>
                         <input type="hidden" class="form-control col-md-6" name="status" id="description" value="{{$status}}">
                     </div>
                 </div>

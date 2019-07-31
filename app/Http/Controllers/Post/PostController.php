@@ -219,6 +219,7 @@ class PostController extends Controller
         $post->title  =  $request->title;
         $post->desc   =  $request->desc;
         $post->status =  $request->status;
+        // dd($post->status);
         $posts    =  $this->postService->update($user_id, $post);
         return redirect()->route('posts.index');
     }

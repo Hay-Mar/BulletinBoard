@@ -31,7 +31,8 @@
                 <div class="form-group row">
                     <label for="status" class="col-md-4 form-check-label">Status</label>
                     <div class="col">
-                        <input type="checkbox" id="status" name="status" class="form-check-input col-md-1" value="1">
+                        <input type="checkbox" id="status" name="status" class="form-check-input col-md-1" value="1"
+                        @if(old('status', $post->status)=='1' ) {{"checked"}} @endif>
                     </div>
                 </div>
                 <div class="form-group">
